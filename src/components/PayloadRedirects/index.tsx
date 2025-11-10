@@ -14,6 +14,12 @@ interface Props {
 export const PayloadRedirects: React.FC<Props> = async ({ disableNotFound, url }) => {
   const redirects = await getCachedRedirects()()
 
+  if (!redirects || redirects.length === 0) {
+    if (disableNotFound) return null
+    notFound()
+    return null
+  }
+
   const redirectItem = redirects.find((redirect) => redirect.from === url)
 
   if (redirectItem) {
