@@ -7,8 +7,8 @@ export type Props = {
   posts: CardPostData[]
 }
 
-export const CollectionArchive: React.FC<Props> = (props) => {
-  const { posts } = props
+export const CollectionArchive: React.FC<Props & { relationTo: 'posts' | 'projects' }> = (props) => {
+  const { posts, relationTo } = props
 
   return (
     <div className={cn('container')}>
@@ -18,7 +18,7 @@ export const CollectionArchive: React.FC<Props> = (props) => {
             if (typeof result === 'object' && result !== null) {
               return (
                 <div className="col-span-4" key={index}>
-                  <Card className="h-full" doc={result} relationTo="posts" showCategories />
+                  <Card className="h-full" doc={result} relationTo={relationTo} showCategories={relationTo === 'posts'} />
                 </div>
               )
             }

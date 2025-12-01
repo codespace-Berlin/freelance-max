@@ -3,18 +3,24 @@ import type { CollectionSlug, GlobalSlug, Payload, PayloadRequest, File } from '
 import { contactForm as contactFormData } from './contact-form'
 import { contact as contactPageData } from './contact-page'
 import { home } from './home'
+import { homeWithProjects } from './home-with-projects'
 import { image1 } from './image-1'
 import { image2 } from './image-2'
+import { image3 } from './image-3'
 import { imageHero1 } from './image-hero-1'
 import { post1 } from './post-1'
 import { post2 } from './post-2'
 import { post3 } from './post-3'
+import { project1 } from './project-1'
+import { project2 } from './project-2'
+import { project3 } from './project-3'
 
 const collections: CollectionSlug[] = [
   'categories',
   'media',
   'pages',
   'posts',
+  'projects',
   'forms',
   'form-submissions',
   'search',
@@ -119,7 +125,7 @@ export const seed = async ({
     }),
     payload.create({
       collection: 'media',
-      data: image2,
+      data: image3,
       file: image3Buffer,
     }),
     payload.create({
@@ -192,6 +198,35 @@ export const seed = async ({
     },
   })
 
+  payload.logger.info(`— Seeding projects...`)
+
+  const project1Doc = await payload.create({
+    collection: 'projects',
+    depth: 0,
+    context: {
+      disableRevalidate: true,
+    },
+    data: project1({ featuredImage: image1Doc, galleryImage1: image2Doc, galleryImage2: image3Doc }),
+  })
+
+  const project2Doc = await payload.create({
+    collection: 'projects',
+    depth: 0,
+    context: {
+      disableRevalidate: true,
+    },
+    data: project2({ featuredImage: image2Doc, galleryImage1: image3Doc }),
+  })
+
+  const project3Doc = await payload.create({
+    collection: 'projects',
+    depth: 0,
+    context: {
+      disableRevalidate: true,
+    },
+    data: project3({ featuredImage: image3Doc }),
+  })
+
   payload.logger.info(`— Seeding contact form...`)
 
   const contactForm = await payload.create({
@@ -206,7 +241,11 @@ export const seed = async ({
     payload.create({
       collection: 'pages',
       depth: 0,
-      data: home({ heroImage: imageHomeDoc, metaImage: image2Doc }),
+      data: homeWithProjects({
+        heroImage: imageHomeDoc,
+        metaImage: image2Doc,
+        projects: [project1Doc, project2Doc, project3Doc],
+      }),
     }),
     payload.create({
       collection: 'pages',
@@ -222,6 +261,13 @@ export const seed = async ({
       slug: 'header',
       data: {
         navItems: [
+          {
+            link: {
+              type: 'custom',
+              label: 'Projects',
+              url: '/projects',
+            },
+          },
           {
             link: {
               type: 'custom',
@@ -249,24 +295,22 @@ export const seed = async ({
           {
             link: {
               type: 'custom',
+              label: 'Projects',
+              url: '/projects',
+            },
+          },
+          {
+            link: {
+              type: 'custom',
+              label: 'Posts',
+              url: '/posts',
+            },
+          },
+          {
+            link: {
+              type: 'custom',
               label: 'Admin',
               url: '/admin',
-            },
-          },
-          {
-            link: {
-              type: 'custom',
-              label: 'Source Code',
-              newTab: true,
-              url: 'https://github.com/payloadcms/payload/tree/main/templates/website',
-            },
-          },
-          {
-            link: {
-              type: 'custom',
-              label: 'Payload',
-              newTab: true,
-              url: 'https://payloadcms.com/',
             },
           },
         ],

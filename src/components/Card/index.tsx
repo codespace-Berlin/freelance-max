@@ -4,25 +4,36 @@ import useClickableCard from '@/utilities/useClickableCard'
 import Link from 'next/link'
 import React, { Fragment } from 'react'
 
-import type { Post } from '@/payload-types'
+import type { Post, Project } from '@/payload-types'
 
 import { Media } from '@/components/Media'
 
 export type CardPostData = Pick<Post, 'slug' | 'categories' | 'meta' | 'title'>
+export type CardProjectData = Pick<Project, 'slug' | 'meta' | 'title' | 'description' | 'featuredImage'>
 
 export const Card: React.FC<{
   alignItems?: 'center'
   className?: string
-  doc?: CardPostData
-  relationTo?: 'posts'
+  doc?: CardPostData | CardProjectData
+  relationTo: 'posts' | 'projects'
   showCategories?: boolean
   title?: string
 }> = (props) => {
   const { card, link } = useClickableCard({})
   const { className, doc, relationTo, showCategories, title: titleFromProps } = props
 
-  const { slug, categories, meta, title } = doc || {}
-  const { description, image: metaImage } = meta || {}
+  // Type-safe extraction based on relationTo
+  const isProject = relationTo === 'projects'
+  const projectData = isProject && doc ? (doc as CardProjectData) : null
+  const postData = !isProject && doc ? (doc as CardPostData) : null
+
+  const slug = projectData?.slug || postData?.slug
+  const title = projectData?.title || postData?.title
+  const categories = postData?.categories
+  const meta = postData?.meta
+  
+  const description = projectData?.description || meta?.description
+  const image = projectData?.featuredImage || meta?.image
 
   const hasCategories = categories && Array.isArray(categories) && categories.length > 0
   const titleToUse = titleFromProps || title
@@ -38,8 +49,8 @@ export const Card: React.FC<{
       ref={card.ref}
     >
       <div className="relative w-full ">
-        {!metaImage && <div className="">No image</div>}
-        {metaImage && typeof metaImage !== 'string' && <Media resource={metaImage} size="33vw" />}
+        {!image && <div className="">No image</div>}
+        {image && typeof image !== 'string' && <Media resource={image} size="33vw" />}
       </div>
       <div className="p-4">
         {showCategories && hasCategories && (

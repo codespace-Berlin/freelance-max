@@ -15,15 +15,16 @@ export default async function Page() {
   try {
     const payload = await getPayload({ config: configPromise })
 
-    const posts = await payload.find({
-      collection: 'posts',
+    const projects = await payload.find({
+      collection: 'projects',
       depth: 1,
       limit: 12,
       overrideAccess: false,
       select: {
         title: true,
         slug: true,
-        categories: true,
+        description: true,
+        featuredImage: true,
         meta: true,
       },
     })
@@ -33,40 +34,41 @@ export default async function Page() {
         <PageClient />
         <div className="container mb-16">
           <div className="prose dark:prose-invert max-w-none">
-            <h1>Posts</h1>
+            <h1>Projects</h1>
+            <p className="text-muted-foreground">Explore my portfolio of work</p>
           </div>
         </div>
 
         <div className="container mb-8">
           <PageRange
-            collection="posts"
-            currentPage={posts.page}
+            collection="projects"
+            currentPage={projects.page}
             limit={12}
-            totalDocs={posts.totalDocs}
+            totalDocs={projects.totalDocs}
           />
         </div>
 
-        <CollectionArchive posts={posts.docs} relationTo="posts" />
+        <CollectionArchive posts={projects.docs as any} relationTo="projects" />
 
         <div className="container">
-          {posts.totalPages > 1 && posts.page && (
-            <Pagination page={posts.page} totalPages={posts.totalPages} />
+          {projects.totalPages > 1 && projects.page && (
+            <Pagination page={projects.page} totalPages={projects.totalPages} />
           )}
         </div>
       </div>
     )
   } catch (_error) {
-    // If database is not available, return empty posts list
+    // If database is not available, return empty projects list
     return (
       <div className="pt-24 pb-24">
         <PageClient />
         <div className="container mb-16">
           <div className="prose dark:prose-invert max-w-none">
-            <h1>Posts</h1>
+            <h1>Projects</h1>
           </div>
         </div>
         <div className="container">
-          <p>No posts available.</p>
+          <p>No projects available.</p>
         </div>
       </div>
     )
@@ -75,6 +77,7 @@ export default async function Page() {
 
 export function generateMetadata(): Metadata {
   return {
-    title: `Payload Website Template Posts`,
+    title: `Projects`,
   }
 }
+

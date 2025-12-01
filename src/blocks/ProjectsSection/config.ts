@@ -7,10 +7,18 @@ import {
   lexicalEditor,
 } from '@payloadcms/richtext-lexical'
 
-export const Archive: Block = {
-  slug: 'archive',
-  interfaceName: 'ArchiveBlock',
+export const ProjectsSection: Block = {
+  slug: 'projectsSection',
+  interfaceName: 'ProjectsSectionBlock',
   fields: [
+    {
+      name: 'title',
+      type: 'text',
+      required: false,
+      admin: {
+        description: 'Section title (e.g., "Featured Projects")',
+      },
+    },
     {
       name: 'introContent',
       type: 'richText',
@@ -25,6 +33,7 @@ export const Archive: Block = {
         },
       }),
       label: 'Intro Content',
+      required: false,
     },
     {
       name: 'populateBy',
@@ -42,57 +51,29 @@ export const Archive: Block = {
       ],
     },
     {
-      name: 'relationTo',
-      type: 'select',
-      admin: {
-        condition: (_, siblingData) => siblingData.populateBy === 'collection',
-      },
-      defaultValue: 'posts',
-      label: 'Collections To Show',
-      options: [
-        {
-          label: 'Posts',
-          value: 'posts',
-        },
-        {
-          label: 'Projects',
-          value: 'projects',
-        },
-      ],
-    },
-    {
-      name: 'categories',
-      type: 'relationship',
-      admin: {
-        condition: (_, siblingData) => siblingData.populateBy === 'collection',
-      },
-      hasMany: true,
-      label: 'Categories To Show',
-      relationTo: 'categories',
-    },
-    {
       name: 'limit',
       type: 'number',
       admin: {
         condition: (_, siblingData) => siblingData.populateBy === 'collection',
         step: 1,
       },
-      defaultValue: 10,
-      label: 'Limit',
+      defaultValue: 6,
+      label: 'Number of Projects to Show',
     },
     {
-      name: 'selectedDocs',
+      name: 'selectedProjects',
       type: 'relationship',
       admin: {
         condition: (_, siblingData) => siblingData.populateBy === 'selection',
       },
       hasMany: true,
-      label: 'Selection',
-      relationTo: ['posts', 'projects'],
+      label: 'Selected Projects',
+      relationTo: ['projects'],
     },
   ],
   labels: {
-    plural: 'Archives',
-    singular: 'Archive',
+    plural: 'Projects Sections',
+    singular: 'Projects Section',
   },
 }
+
